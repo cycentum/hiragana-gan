@@ -1,5 +1,8 @@
 # Generating hiraganas (Japanese characters) with conditional GAN.
 
+## Examples
+
+
 ## Dependencies
 - Python 3
 - Chainer https://chainer.org/
