@@ -1,5 +1,5 @@
 ###
-# Codes in this file is copied from https://github.com/pfnet-research/chainer-gan-lib/blob/master/common/net.py
+# Codes in this file are copied from https://github.com/pfnet-research/chainer-gan-lib/blob/master/common/net.py
 # and modified.
 ###
 
