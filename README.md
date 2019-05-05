@@ -1,7 +1,11 @@
 # Generating hiraganas (Japanese characters) with conditional GAN.
 
 ## Examples
-!(./HiraganaGan/Result/Latent0.png)
+These are the generated characters with different latent values.
+![Example result](./HiraganaGan/Result/Latent0.png)
+![Example result](./HiraganaGan/Result/Latent1.png)
+![Example result](./HiraganaGan/Result/Latent2.png)
+![Example result](./HiraganaGan/Result/Latent3.png)
 
 ## Dependencies
 - Python 3
