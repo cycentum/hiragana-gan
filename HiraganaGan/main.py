@@ -161,6 +161,9 @@ def trainGan(lossType, numEpoch):
 	saveEpoch=numEpoch
 	np.random.seed(201905051748%np.iinfo(uint32).max)
 	
+	if lossType=="rel-ls-gan":
+		ones=xp.ones((batchSize, batchSize), float32)
+	
 	latentSize=32
 	generator, optGen=setupGenerator(latentSize, len(chars), GPU_ID)
 	discriminator, optDis=setupDiscriminator(len(chars), GPU_ID)
@@ -186,12 +189,18 @@ def trainGan(lossType, numEpoch):
 			lossDis += functions.mean(functions.softplus(y_fake))
 			
 			lossGen = functions.mean(functions.softplus(-y_fake))
+			
 		elif lossType=="relgan":
 			diff=y_real-y_fake.T
 			lossDis=-functions.softplus(-diff) #log(sigmoid(diff))
 			lossDis=-functions.mean(lossDis)
 			lossGen=-functions.softplus(diff) #log(sigmoid(-diff))
 			lossGen=-functions.mean(lossGen)
+		
+		elif lossType=="rel-ls-gan":
+			diff=y_real-y_fake.T
+			lossDis=functions.mean_squared_error(diff, ones)+functions.mean_squared_error(-diff, -ones)
+			lossGen=functions.mean_squared_error(-diff, ones)+functions.mean_squared_error(diff, -ones)
 		
 		generator.cleargrads()
 		lossGen.backward()
@@ -256,3 +265,7 @@ if __name__=="__main__":
 	
 	trainGan("relgan", 3000)
 	generate("relgan", 3000-1)
+
+	trainGan("rel-ls-gan", 3000)
+	generate("rel-ls-gan", 3000-1)
+	
