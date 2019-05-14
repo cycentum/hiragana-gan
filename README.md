@@ -2,11 +2,18 @@
 
 ## Examples
 These are the generated characters with 4 different latents.
+### DCGAN
+![Example result](./HiraganaGan/Result/dcgan/Latent0.png)
+![Example result](./HiraganaGan/Result/dcgan/Latent1.png)
+![Example result](./HiraganaGan/Result/dcgan/Latent2.png)
+![Example result](./HiraganaGan/Result/dcgan/Latent3.png)
+### Relativistic GAN
+![Example result](./HiraganaGan/Result/relgan/Latent0.png)
+![Example result](./HiraganaGan/Result/relgan/Latent1.png)
+![Example result](./HiraganaGan/Result/relgan/Latent2.png)
+![Example result](./HiraganaGan/Result/relgan/Latent3.png)
 
-![Example result](./HiraganaGan/Result/Latent0.png)
-![Example result](./HiraganaGan/Result/Latent1.png)
-![Example result](./HiraganaGan/Result/Latent2.png)
-![Example result](./HiraganaGan/Result/Latent3.png)
+(Reference: The relativistic discriminator: a key element missing from standard GAN. https://arxiv.org/abs/1807.00734)
 
 ## Dependencies
 - Python 3
