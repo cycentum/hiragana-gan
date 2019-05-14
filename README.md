@@ -2,11 +2,16 @@
 
 ## Examples
 These are the generated characters with 4 different latents.
-
-![Example result](./HiraganaGan/Result/Latent0.png)
-![Example result](./HiraganaGan/Result/Latent1.png)
-![Example result](./HiraganaGan/Result/Latent2.png)
-![Example result](./HiraganaGan/Result/Latent3.png)
+### DCGAN
+![Example result](./HiraganaGan/Result/dcgan/Latent0.png)
+![Example result](./HiraganaGan/Result/dcgan/Latent1.png)
+![Example result](./HiraganaGan/Result/dcgan/Latent2.png)
+![Example result](./HiraganaGan/Result/dcgan/Latent3.png)
+### Relativistic GAN
+![Example result](./HiraganaGan/Result/relgan/Latent0.png)
+![Example result](./HiraganaGan/Result/relgan/Latent1.png)
+![Example result](./HiraganaGan/Result/relgan/Latent2.png)
+![Example result](./HiraganaGan/Result/relgan/Latent3.png)
 
 ## Dependencies
 - Python 3
