@@ -14,6 +14,13 @@ These are the generated characters with 4 different latents.
 ![Example result](./HiraganaGan/Result/relgan/Latent3.png)
 
 (Reference: The relativistic discriminator: a key element missing from standard GAN. https://arxiv.org/abs/1807.00734)
+### Relativistic least square GAN
+![Example result](./HiraganaGan/Result/rel-ls-gan/Latent0.png)
+![Example result](./HiraganaGan/Result/rel-ls-gan/Latent1.png)
+![Example result](./HiraganaGan/Result/rel-ls-gan/Latent2.png)
+![Example result](./HiraganaGan/Result/rel-ls-gan/Latent3.png)
+
+(Reference: The relativistic discriminator: a key element missing from standard GAN. https://arxiv.org/abs/1807.00734)
 
 ## Dependencies
 - Python 3
