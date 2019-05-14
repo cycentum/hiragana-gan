@@ -254,5 +254,5 @@ if __name__=="__main__":
 	trainGan("dcgan", 3000)
 	generate("dcgan", 3000-1)
 	
-	trainGan("relgan", 5000)
-	generate("relgan", 5000-1)
+	trainGan("relgan", 3000)
+	generate("relgan", 3000-1)
