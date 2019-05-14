@@ -144,7 +144,7 @@ def catLabelToLatent(z, labels, numChars):
 	return z
 
 
-def trainGan():
+def trainGan(lossType, numEpoch):
 	fontChars=readValidFontChar(FILE_VALID_FONT_CHAR)
 	chars=sorted(set(itertools.chain.from_iterable([ch for font,ch in fontChars.items()])))
 	fonts=sorted(fontChars)
@@ -158,8 +158,7 @@ def trainGan():
 	batchSize=64
 	numH=8
 	numV=8
-	numEpoch=3000
-	saveEpoch=3000
+	saveEpoch=numEpoch
 	np.random.seed(201905051748%np.iinfo(uint32).max)
 	
 	latentSize=32
@@ -182,31 +181,40 @@ def trainGan():
 		xFake=catLabelToImage(imFake, latentLabels, len(chars))
 		y_fake = discriminator(xFake)
 		
-		erDis = functions.mean(functions.softplus(-y_real))
-		erDis += functions.mean(functions.softplus(y_fake))
-		
-		erGen = functions.mean(functions.softplus(-y_fake))
+		if lossType=="dcgan":
+			lossDis = functions.mean(functions.softplus(-y_real))
+			lossDis += functions.mean(functions.softplus(y_fake))
+			
+			lossGen = functions.mean(functions.softplus(-y_fake))
+		elif lossType=="relgan":
+			diff=y_real-y_fake.T
+			lossDis=-functions.softplus(-diff) #log(sigmoid(diff))
+			lossDis=-functions.mean(lossDis)
+			lossGen=-functions.softplus(diff) #log(sigmoid(-diff))
+			lossGen=-functions.mean(lossGen)
 		
 		generator.cleargrads()
-		erGen.backward()
+		lossGen.backward()
 		optGen.update()
 		xFake.unchain_backward()
 		
 		discriminator.cleargrads()
-		erDis.backward()
+		lossDis.backward()
 		optDis.update()
 		
-		print("epoch", epoch, 'loss_gen', erGen.data, 'loss_dis', erDis.data, sep="\t")
+		print("epoch", epoch, 'loss_gen', lossGen.data, 'loss_dis', lossDis.data, sep="\t")
 		
 		if epoch%saveEpoch==saveEpoch-1:
-			fileImage=DIR_RESULT/("Epoch"+str(epoch)+".png")
+			dirResult=DIR_RESULT/lossType
+			dirResult.mkdir(exist_ok=True, parents=True)
+			fileImage=dirResult/("Epoch"+str(epoch)+".png")
 			fileImage.parent.mkdir(exist_ok=True, parents=True)
-			fileLabel=DIR_RESULT/("Epoch"+str(epoch)+".txt")
-			fileGen=DIR_RESULT/("Epoch"+str(epoch)+".gen")
+			fileLabel=dirResult/("Epoch"+str(epoch)+".txt")
+			fileGen=dirResult/("Epoch"+str(epoch)+".gen")
 			saveGeneratedGenerator(numH, numV, imFake, generator, fileImage, fileGen, latentLabels, chars, fileLabel, None, None)
 
 
-def generate():
+def generate(lossType, epoch):
 	fontChars=readValidFontChar(FILE_VALID_FONT_CHAR)
 	chars=sorted(set(itertools.chain.from_iterable([ch for font,ch in fontChars.items()])))
 	
@@ -217,31 +225,34 @@ def generate():
 	batchSize=len(chars) #48
 	numH,numV=5,10
 	latentSize=32
-	generator, _=setupGenerator(latentSize, len(chars), GPU_ID, DIR_RESULT/"Epoch2999.gen")
+	dirResult=DIR_RESULT/lossType
+	generator, _=setupGenerator(latentSize, len(chars), GPU_ID, dirResult/("Epoch"+str(epoch)+".gen"))
 	
 	for latentIndex in range(4):
 		z=np.random.uniform(-1, 1, (1, latentSize)).astype(float32)
 		z=np.repeat(z, batchSize, axis=0)
 		latentLabels=np.arange(len(chars))
 		z=catLabelToLatent(z, latentLabels, len(chars))
-		with chainer.using_config('train', False):
-			with chainer.using_config("enable_backprop", False):
-				z=Variable(xp.asarray(z))
-				imGen= generator(z)
-				
-				fileImage=DIR_RESULT/("Latent"+str(latentIndex)+".png")
-				fileImage.parent.mkdir(exist_ok=True, parents=True)
-				imGen=xp.concatenate((imGen.data, xp.zeros_like(imGen)[:2]), axis=0)
-				saveGeneratedGenerator(numH, numV, imGen, None, fileImage, None, latentLabels, chars, None, None, None)
+		with chainer.using_config('train', False), chainer.using_config("enable_backprop", False):
+			z=Variable(xp.asarray(z))
+			imGen= generator(z)
+			
+			fileImage=dirResult/("Latent"+str(latentIndex)+".png")
+			fileImage.parent.mkdir(exist_ok=True, parents=True)
+			imGen=xp.concatenate((imGen.data, xp.zeros_like(imGen)[:2]), axis=0)
+			saveGeneratedGenerator(numH, numV, imGen, None, fileImage, None, latentLabels, chars, None, None, None)
 		
 
 
 if __name__=="__main__":
-	DIR_KANA_GAN=Path(r"./")
+	DIR_HIRAGANA_GAN=Path(r"./")
 	DIR_FONT=Path(r"C:\Windows\Fonts")
-	FILE_VALID_FONT_CHAR=DIR_KANA_GAN/"ValidFontChar.txt"
-	DIR_RESULT=DIR_KANA_GAN/"Result"
+	FILE_VALID_FONT_CHAR=DIR_HIRAGANA_GAN/"ValidFontChar.txt"
+	DIR_RESULT=DIR_HIRAGANA_GAN/"Result"
 	GPU_ID=0
 	
-	trainGan()
-	generate()
+	trainGan("dcgan", 3000)
+	generate("dcgan", 3000-1)
+	
+	trainGan("relgan", 5000)
+	generate("relgan", 5000-1)
